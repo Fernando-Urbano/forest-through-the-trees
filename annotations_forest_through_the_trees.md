@@ -1,4 +1,4 @@
-# FOREST THROUGH THE TREES: BUILDING CROSS-SECTIONS OF STOCK RETURNS
+# ANNOTATIONS ABOUT FOREST THROUGH THE TREES: BUILDING CROSS-SECTIONS OF STOCK RETURNS
 # Introduction
 What explains expected returns:
 1. the returns of test assets in cross-section
