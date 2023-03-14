@@ -48,7 +48,7 @@ ax.set_title(
 )
 ax.text(
     1, -0.2,
-    "Source: Fernando Urbano - Admission Process ICME MS Stanford",
+    "",
     verticalalignment='bottom',
     horizontalalignment='right',
     transform=ax.transAxes
@@ -73,7 +73,7 @@ ax.set_title(
 )
 ax.text(
     1, -0.2,
-    "Source: Fernando Urbano - Admission Process ICME MS Stanford",
+    "",
     verticalalignment='bottom',
     horizontalalignment='right',
     transform=ax.transAxes
@@ -101,7 +101,7 @@ ax.set_title(
 )
 ax.text(
     1, -0.2,
-    "Source: Fernando Urbano - Admission Process ICME MS Stanford",
+    "",
     verticalalignment='bottom',
     horizontalalignment='right',
     transform=ax.transAxes
