@@ -24,7 +24,7 @@ def plot_cross_sections(df, name, file_name, ylabel, x_axis_label):
     )
     ax.text(
         1, -0.2,
-        "Source: Fernando Urbano - Admission Process ICME MS Stanford",
+        "",
         verticalalignment='bottom',
         horizontalalignment='right',
         transform=ax.transAxes
