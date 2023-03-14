@@ -10,5 +10,3 @@ The whole code can be reproduce in four simple steps:
 2. Run "main.py" file to get the results for multiple time-frames, factor models, characteristics, amount of sorting quantiles, and depth of the AP-Tree.
 3. Run "results/results_graphics.py" to get the graphics of each experiment about (i) alpha t-value, (ii) Sharpe out-of-sample, (iii) R-squared.
 4. Run "results/join_graphics.py" to join the graphic results.
-
-Detailed explanation of the reproduction can be found in: https://drive.google.com/file/d/1VsrWBhwNH3ZUswHzatwikdAH0ZWQkCD4/view?usp=sharing
