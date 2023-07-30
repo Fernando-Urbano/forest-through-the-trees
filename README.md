@@ -1,4 +1,4 @@
-# Forest Through the Trees: Building Cross-Sections of Stock Returns Replication
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/882c42df-973a-42e1-bcc1-bb323942b01c)# Forest Through the Trees: Building Cross-Sections of Stock Returns Replication
 ## Code Material
 Through this code, I object to implement a replication of the paper "Forest Through the Trees: Building Cross-Sections of Stock Returns".
 The code is divided by its goals:
@@ -95,5 +95,128 @@ According to the information given before, the experiment for each (i) number of
 3. Divide the stocks in quantiles (meaning terciles if using three characteristics, and quartiles if using two characteristics).
 4. Construct equal-weighted portfolios for each division.
 5. Construct test assets with the equal-weighted portfolios of quantiles by going long on one division and short on the opposite division (for instance, one test asset is done by going long on Q4 B/M, Q4 Size, and short on Q1 B/M, Q1 Size).
-6. Regress the assets by the chosen factor model in the testing sample in a time-series. For instance, when using a Fama French model, the following regression is done for each asset, where $$\tilde{r}_i$$ is a vector of excess of returns of test asset, $r_{MKT}$ is a vector of returns of the market factor (which represents the return of the market minus the return of the risk-free rate), $r_{HML}$ is a vector of returns of the HML factor (High book-to-market ratio stocks minus low book-to-market ratio stocks), and $r_{SMB}$ is a vector of returns of the SMB factor (small caps minus big caps):
+6. Regress the assets by the chosen factor model in the testing sample in a time-series. For instance, when using a Fama French model, the following regression is done for each asset, where $\tilde{r_i}$ is a vector of excess of returns of test asset, $r_{MKT}$ is a vector of returns of the market factor (which represents the return of the market minus the return of the risk-free rate), $r_{HML}$ is a vector of returns of the HML factor (High book-to-market ratio stocks minus low book-to-market ratio stocks), and $r_{SMB}$ is a vector of returns of the SMB factor (small caps minus big caps):
 
+$$
+\tilde{r_i} = \beta_{0} + \beta_{MKT} r_{MKT} + \beta_{HML} r_{HML} + \beta_{SMB} r_{SMB} 
+$$
+
+7.	Apply the beta parameters related to each of the factors used to explain the accumulated return of the testing sample in another regression. In the same example used in point 6., r ̃ would be a vector of accumulated excess of returns of assets, b would be the risk-premium for each of the factors, and α would be the excess of return not related to any factor:
+
+$$
+\tilde{r} = \alpha + \b_{MKT} beta_{MKT} + \b_{HML} beta_{HML} + \b_{SMB} beta_{SMB} 
+$$
+
+8.	Check the validity of the alpha by looking at its p-value and t-value: if alpha is significantly different from zero, the factor model used could not capture all systematic risk.
+9.	Use the test assets generated to construct a mean-variance portfolio and calculate its Sharpe ratio in the testing set. The out-of-sample Sharpe ratio of a pool of test assets reflects the capacity of the pool to span the SDF: the better the Sharpe, the better the capacity of the pool to span the SDF.
+
+### 2.2. AP-TREE
+1.	Separate the training set in training and validation.
+2.	Take the pool of stocks and take the cross-section of accumulated excess of returns in 12 months at the end of the new training sample, and their characteristics on the same date.
+3.	For each of the characteristics, rank the stocks from lowest to highest.
+4.	Use Regression tree to explain the accumulated excess of returns in 12 months using the characteristics as features.
+5.	Group the stocks by the final node of the tree where they are. For instance, when using Fama-French, one group of stocks might have B/M ratio higher than 87% of stocks, and Size higher than 22% of stocks but smaller than 35% of stocks.
+6.	Transform the stocks in each group into a single portfolio using mean-variance optimization. Test the mean-variance optimization always taking the weights of the minimum-variance portfolio for different levels of RIDGE regularization.
+7.	Check the performance of all portfolios in the validation sample, choosing for each portfolio the lambda that generates the best out-of-sample Sharpe ratio in the validation sample. Calculate the average of all lambdas.
+8.	Join the training and validation samples again, going back to the previous training sample used in unconditional sorting.
+9.	Perform AP-TREE steps 2, 3, 4, and 5 using the complete training sample (which accounts for validation + training sample).
+10.	Transform the stocks in each of the new groups in a single portfolio using mean-variance optimization with the optimal regularization level found before (optimal lambda).
+11.	The portfolios must be long-only. Therefore, for each of the portfolios check if all weights are non-negative. If a portfolio does not match the prerequisite, marginally increase lambda regularization until the weights are all positive only for that specific portfolio. After all portfolios are long-only, we can consider them test assets.
+12.	Perform UNCONDITIONAL SORTING steps 6, and 7 with the test assets generated by AP-Tree.
+13.	Perform UNCONDITIONAL SORTING step 8.
+14.	Perform UNCONDITIONAL SORTING step 9.
+
+Compare the results generated by the UNCONDITIONAL SORTING method steps 8 and 9, with the results generated by the AP-TREE method steps 13 and 14.
+
+## 3. DATA
+The stock characteristics and excess of returns are collected from the “mlfactor.com” website, which shows information from the book “Machine Learning for Factor Investing”, by Guillaume Coqueret and Tony Guida. The data description is shown in section 17 of the website. We use:
+
+•	stock_id.
+•	date.
+•	Mom_11M_Usd, which ranks the stocks by momentum, to represent the Momentum characteristic.
+•	Pb, which ranks the stocks by price to book, and represents the B/M ratio characteristic.
+•	Mkt_Cap_12M_Usd, which ranks the stocks by the 12-month average market cap, and represents the Size characteristic.
+•	R1M_Usd, which represents the return forward 1 month (it is used in lag to refer to the past return and subtracted by the risk-free rate).
+•	R12M_Usd, which represents the return forward 12 months (it is used in lag to refer to the past return and subtracted by the risk-free rate).
+
+The factors are collected from the Kenneth French website. We use:
+
+•	MOM, Momentum factor.
+•	HML, High (book to market ratio) minus low factor.
+•	SMB, Small (market cap) minus big factor.
+•	MKT, excess of return of the market.
+
+To assure the availability of data for more stocks, we use the sample data from January 2001 to January 2018, always in a monthly perspective.
+
+The experiment is performed using rolling testing samples: the training set always starts in January 2001, and the rest is a function of the test sample. We use test samples starting in January 2009 and going forward until January 2018, always with a two-year or three-year period. The validation sample, separated for the AP-Tree, is composed of the two years before the test sample, and the training sample goes from January 2001 until the month before validation sample for the AP-Tree, and from January until the month before testing sample for Unconditional Sorting.
+
+## 4. RESULTS AND CONCLUSION
+The results found agree with the original paper. In most cross-sections:
+
+i)	Sharpe-ratio out-of-sample is bigger when using AP-Tree test assets than when using unconditional sorting test assets. Therefore, we can conclude that test assets generated by AP-Tree generally span better the SDF and are more capable of testing the validity of factor model to price all systematic risk.
+ii)	Alpha t-value is bigger and R2 is smaller when using AP-Tree test assets than when using unconditional sorting test assets. Due to the AP-Tree test assets capacity to SPAN the SDF, the results found with unconditional sorting should be viewed as misleading and without capacity to represent the truth. Bigger alpha t-value and smaller R2  mean that, by using the AP-Tree test assets, which are the most correct experiment features, we find that factor models supposed to price a certain amount of systematic risk, are often able to price less.
+
+The results found in this replication do not find a difference between AP-Tree test assets and unconditional sorting test assets as big as the one found on the original paper. The main reasons for the distinction probably are due to the simplifications pointed In the DISCLAIMER section.
+
+Furthermore, some perceptions are evident from the results as well:
+
+i)   AP-Trees with bigger maximum depth generally generate test assets that outperform test assets of AP-Trees with smaller depths in Sharpe ratio. Furthermore, those AP-Trees lead to test assets with smaller R2 and bigger alpha t-value.
+ii)  Test assets generated by AP-Trees suffer less in periods of strongly negative returns: the out-of-sample Sharpe ratios for AP-Tree test assets are more stable over time than the ones generated by test assets constructed with unconditional sorting.
+iii)  Sharpe-ratios are often very similar independently of the depth of the tree.
+
+The following graphics show (i) out-of-sample Sharpe, (ii) alpha t-value in the cross-section of returns being explained by factor betas, and (iii) R2 of the cross-section of returns being explained by factor betas. The cross-sections are ordered according to the out-of-sample Sharpe of AP-Tree test assets.
+
+The input of the results can be viewed in the bottom-left part of each graphic, where:
+
+The input of the results can be viewed in the bottom-left part of each graphic, where:
+-	MTP: months of testing period. Generally, 36 months are used.
+-	CHAR: characteristics used to sort stocks into portfolios, where HML is the characteristic of the HML factor (B/M ratio), SMB is the characteristic of the SMB factor (Size), and MOM is the momentum of the stock.
+-	FAC: factor model used. If the only factor seem is MKT, the factor model chosen is the CAPM. If the factors are HML, SMB and MKT, the factor model chosen is the Fama-French, and if the factors are HML, SMB, MKT, and MOM, the factor model chosen is the Fama-French Carhart.
+-	SQ: number of quantiles used in the unconditional sorting. When SQ is equal to 3, terciles were used. When SQ is equal to 4, quartiles were used.
+-	MXD: maximum depth of the tree for the AP-Tree algorithm.
+-	MNS: minimum number of samples per leaf in the AP-Tree.
+
+### 4.1. B/M AND SIZE CHARACTERISTICS VS. CAPM MODEL WITH 8 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/8b7064fd-762d-4383-a620-6335289578b9)
+
+### 4.2. B/M AND SIZE CHARACTERISTICS VS. FAMA-FRENCH MODEL WITH 8 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/1f8a329a-40af-41c1-a66d-28eb8f6a0af1)
+
+### 4.3. B/M, SIZE AND MOM CHARACTERISTICS VS. CAPM MODEL WITH 8 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/25768a4b-678e-4d7e-aaab-cf06e47b078d)
+
+### 4.4. B/M, SIZE AND MOM CHARACTERISTICS VS. FAMA-FRENCH MODEL WITH 8 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/be4a7b97-70c6-4610-abef-797bd6f2e3b5)
+
+### 4.5. B/M, SIZE AND MOM CHARACTERISTICS VS. FF-CARHART MODEL WITH 8 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/8c5cdc8f-8ffb-4174-938a-08bfd9b91c6c)
+
+### 4.6. B/M AND SIZE CHARACTERISTICS VS. CAPM MODEL WITH 11 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/8ff6bce0-e287-445d-bb30-1e8a2e59a261)
+
+### 4.7. B/M AND SIZE CHARACTERISTICS VS. FAMA-FRENCH MODEL WITH 11 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/e1c80809-f809-445e-b15c-ad23e3aa881e)
+
+### 4.8. B/M, SIZE AND MOM CHARACTERISTICS VS. CAPM MODEL WITH 11 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/fd4309da-ed83-40d2-a021-b6828ce72846)
+
+### 4.9. B/M, SIZE AND MOM CHARACTERISTICS VS. FAMA-FRENCH MODEL WITH 11 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/34f3a84a-be4e-405b-86dd-fcbffda49fe8)
+
+### 4.10. B/M, SIZE AND MOM CHARACTERISTICS VS. FF-CARHART MODEL WITH 11 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/5819167c-f0ff-475a-86cb-0571b35fb7aa)
+
+### 4.11. B/M AND SIZE CHARACTERISTICS VS. CAPM MODEL WITH 14 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/911db2d2-c0f9-42d3-9118-3fd3da7dedfc)
+
+### 4.12. B/M AND SIZE CHARACTERISTICS VS. FAMA-FRENCH MODEL WITH 14 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/b419b563-ca81-4a58-a562-7cdeada77e8e)
+
+### 4.13. B/M, SIZE AND MOM CHARACTERISTICS VS. CAPM MODEL WITH 14 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/f37b6373-201b-473f-b2a6-52e3d067b519)
+
+### 4.14. B/M, SIZE AND MOM CHARACTERISTICS VS. FAMA-FRENCH MODEL WITH 14 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/3819f669-a4f2-4c50-a7b4-c34383419e5b)
+
+### 4.15. B/M, SIZE AND MOM CHARACTERISTICS VS. FF-CARHART MODEL WITH 14 DEPTH AP-TREE
+![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/42940263-ef25-419d-8be0-569e55119472)
