@@ -1,4 +1,4 @@
-![image](https://github.com/Fernando-Urbano/forest-through-the-trees/assets/99626376/882c42df-973a-42e1-bcc1-bb323942b01c)# Forest Through the Trees: Building Cross-Sections of Stock Returns Replication
+# Forest Through the Trees: Building Cross-Sections of Stock Returns Replication
 ## Code Material
 Through this code, I object to implement a replication of the paper "Forest Through the Trees: Building Cross-Sections of Stock Returns".
 The code is divided by its goals:
