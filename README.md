@@ -104,7 +104,7 @@ $$
 7.	Apply the beta parameters related to each of the factors used to explain the accumulated return of the testing sample in another regression. In the same example used in point 6., r ̃ would be a vector of accumulated excess of returns of assets, b would be the risk-premium for each of the factors, and α would be the excess of return not related to any factor:
 
 $$
-\tilde{r} = \alpha + \b_{MKT} beta_{MKT} + \b_{HML} beta_{HML} + \b_{SMB} beta_{SMB} 
+\tilde{r} = \alpha + b_{MKT} beta_{MKT} + b_{HML} beta_{HML} + b_{SMB} beta_{SMB} 
 $$
 
 8.	Check the validity of the alpha by looking at its p-value and t-value: if alpha is significantly different from zero, the factor model used could not capture all systematic risk.
