@@ -50,11 +50,11 @@ After applying unconditional and conditional sorting to find the test assets, we
 #### 1.2.2. DESIRABLE CHARACTERISTICS OF PORTFOLIOS SPANNING THE SDF
 As seen before, the non-optimal spanning of the SDF leads to unreliable results. That is why correctly spanning the SDF, according to the paper, should:
 
-- i) reflect the impact of multiple characteristics at the same time. 
-- ii) achieve the highest possible Sharpe Ratio out-of-sample when combined together.
-- iii) allow for a flexible nonlinear dependence and interactions. 
-- iv) be a relatively small number of well-diversified managed portfolios feasible for investors.
-- v) provide an interpretable link to fundamentals.
+i) reflect the impact of multiple characteristics at the same time. 
+ii) achieve the highest possible Sharpe Ratio out-of-sample when combined together.
+iii) allow for a flexible nonlinear dependence and interactions. 
+iv) be a relatively small number of well-diversified managed portfolios feasible for investors.
+v) provide an interpretable link to fundamentals.
 
 #### 1.2.3. UNCONDITIONAL SORTING 
 The unconditional method, used by Fama and French, uses quantiles of characteristics to divide stocks into groups and later create portfolios. For instance, in “triple sorting”, the quantiles are divided for each of three different characteristics, and in “double sorting” the quantiles are divided for each of two different characteristics. After, the creation of portfolios is done by staying long on one group and short on the group on the opposite side.
@@ -71,8 +71,8 @@ The stocks in the long, and short parts of the portfolio are equally weighted. W
 #### 1.2.4. CONDITIONAL SORTING: AP-TREE
 The previous method used could disprove a simpler factor model capacity of pricing systematic risk, nevertheless, it is antiquated in its capacity to better span the SDF. Unconditional sorting fails in two major aspects regarding the previous task:
 
-- i) Curse of dimensionality: in unconditional sorting, more characteristics necessary lead to more portfolios while keeping the number of quantiles stable. For instance, sorting by 13 different characteristics with quintiles would lead to 1.220.703.125 (513) different groups of stocks. The technique becomes impossible when dealing with a larger number of dimensions and ends up making unnecessary divisions that provide no interpretable link to fundamentals.
-- ii) Complex joint distribution: unconditional sorting cannot account for nonlinear specific joint distribution, since it has predetermined divisions, failing to separate stocks with different economic fundamentals and failing to join ones with similar.
+i) Curse of dimensionality: in unconditional sorting, more characteristics necessary lead to more portfolios while keeping the number of quantiles stable. For instance, sorting by 13 different characteristics with quintiles would lead to 1.220.703.125 (513) different groups of stocks. The technique becomes impossible when dealing with a larger number of dimensions and ends up making unnecessary divisions that provide no interpretable link to fundamentals.
+ii) Complex joint distribution: unconditional sorting cannot account for nonlinear specific joint distribution, since it has predetermined divisions, failing to separate stocks with different economic fundamentals and failing to join ones with similar.
 
 The method proposed by the paper suggests the assets’ separation into portfolios based on the nodes of a Regression Tree. By the way of explanation, instead of separating portfolios by just looking at the characteristics, the paper proposes using the past return of the assets as an explained variable, while the characteristics (like Book/Market index, Size, and Momentum) are used as features for explaining it. In the end, the nodes have assets that were used to model the returns. The separation in nodes instead of percentiles gives us a division conditional to relevant differences in characteristics, solving the complex joint distribution problem, and enables the use of more characteristics when trying to explain returns without suffering from the curse of dimensionality, since a characteristic will only be used if it is relevant to explain, solving the “overfitting” problem seen when separating by quantiles with a large amount of characteristics, since the depth of the tree can control the degree of the fitting. Particularly for the joint distribution problem, AP-Tree test assets outperform unconditional sorting to a much higher degree in samples where the joint distribution of characteristics is more complex. In the end, each node is selected to become a portfolio to be used as one of the test assets.
 
